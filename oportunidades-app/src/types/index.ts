@@ -84,3 +84,6 @@ export interface Favorito {
   updatedAt: string;
   Oportunidade?: Oportunidade;
 }
+
+
+
