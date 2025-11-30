@@ -1,6 +1,6 @@
-// src/components/OportunidadeCard.tsx
-import React from 'react';
 
+import React from 'react';
+import "../styles/OportunidadeCard.css"
 interface Oportunidade {
   id: number;
   titulo: string;
@@ -32,4 +32,5 @@ export const OportunidadeCard: React.FC<OportunidadeCardProps> = ({ oportunidade
       </div>
     </div>
   );
+
 };
