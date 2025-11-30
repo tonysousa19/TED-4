@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import type { RegisterData } from '../types';
-import "../index.css"
+import "../styles/LoginCadastro.css";
 
 const Cadastro: React.FC = () => {
   const [dados, setDados] = useState<RegisterData>({
@@ -217,3 +217,4 @@ const handleSubmit = async (e: React.FormEvent) => {
 };
 
 export default Cadastro;
+
