@@ -23,48 +23,6 @@ const RedirectIfAuthenticated: React.FC<{ children: React.ReactNode }> = ({ chil
   return <>{children}</>;
 };
 
-
-
-const App: React.FC = () => {
-  return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Rotas públicas */}
-          <Route 
-            path="/login" 
-            element={<RedirectIfAuthenticated><Login /></RedirectIfAuthenticated>} 
-          />
-          <Route 
-            path="/cadastro" 
-            element={<RedirectIfAuthenticated><Cadastro /></RedirectIfAuthenticated>} 
-          />
-
-          {/* Rota de logout */}
-          <Route path="/logout" element={<Logout />} />
-
-          {/* Rotas protegidas */}
-          <Route 
-            path="/" 
-            element={<ProtectedRoute><Home /></ProtectedRoute>} 
-          />
-          <Route 
-            path="/perfil" 
-            element={<ProtectedRoute><Perfil /></ProtectedRoute>} 
-          />
-          <Route 
-            path="/nova-oportunidade" 
-            element={<ProtectedRoute><NovaOportunidade /></ProtectedRoute>} 
-          />
-
-          {/* Rota padrão */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
-  );
-};
-
 // Componente para logout
 const Logout: React.FC = () => {
   const { logout } = useAuth();
@@ -74,6 +32,66 @@ const Logout: React.FC = () => {
   }, [logout]);
 
   return <Navigate to="/login" replace />;
+};
+
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Rotas públicas */}
+          <Route 
+            path="/login" 
+            element={
+              <RedirectIfAuthenticated>
+                <Login />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
+            path="/cadastro" 
+            element={
+              <RedirectIfAuthenticated>
+                <Cadastro />
+              </RedirectIfAuthenticated>
+            } 
+          />
+
+          {/* Rota de logout */}
+          <Route path="/logout" element={<Logout />} />
+
+          {/* Rotas protegidas */}
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/perfil" 
+            element={
+              <ProtectedRoute>
+                <Perfil />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/nova-oportunidade" 
+            element={
+              <ProtectedRoute>
+                <NovaOportunidade />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Rota padrão */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 };
 
 export default App;
