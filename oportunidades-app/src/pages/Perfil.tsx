@@ -60,12 +60,10 @@ const Perfil: React.FC = () => {
     navigate('/login');
   };
 
-  // 🔽 FUNÇÃO formatarData ADICIONADA
   const formatarData = (data: string) => {
     return new Date(data).toLocaleDateString('pt-BR');
   };
 
-  // 🔽 VALIDAÇÃO DE USUÁRIO NULL
   if (!usuario) {
     return <div className="loading">Carregando...</div>;
   }
@@ -79,7 +77,7 @@ const Perfil: React.FC = () => {
               <h1>👤 Meu Perfil</h1>
               <p>Gerencie suas informações e oportunidades</p>
             </div>
-            
+
             <div className="user-info">
               <Link to="/" className="btn" style={{background: '#4f46e5'}}>
                 Voltar à Home
@@ -94,7 +92,7 @@ const Perfil: React.FC = () => {
 
       <main className="container">
         <div className="dashboard">
-          {/* Informações do usuário */}
+          {}
           <div className="dashboard-card" style={{marginBottom: '30px'}}>
             <h2>Informações Pessoais</h2>
             <div className="perfil-info">
@@ -111,11 +109,11 @@ const Perfil: React.FC = () => {
             </div>
           </div>
 
-          {/* Conteúdo específico por tipo de usuário */}
+          {}
           {usuario.role === 'student' && (
             <div className="dashboard-card">
               <h2>⭐ Oportunidades Favoritadas</h2>
-              
+
               {carregandoFavoritos ? (
                 <div className="loading">Carregando favoritos...</div>
               ) : favoritos.length === 0 ? (
@@ -144,7 +142,7 @@ const Perfil: React.FC = () => {
                         <p className="oportunidade-descricao">
                           {oportunidade.descricao.substring(0, 100)}...
                         </p>
-                        
+
                         <div className="oportunidade-info">
                           <div className="info-item">
                             <span>🏢 {oportunidade.Organizacao?.nome}</span>
@@ -159,7 +157,7 @@ const Perfil: React.FC = () => {
                             <span>📅 {formatarData(oportunidade.prazo_inscricao)}</span>
                           </div>
                         </div>
-                        
+
                         <div className="oportunidade-actions">
                           <button className="btn-inscrever">
                             Ver Detalhes
@@ -217,7 +215,7 @@ const Perfil: React.FC = () => {
                         <p className="oportunidade-descricao">
                           {oportunidade.descricao.substring(0, 100)}...
                         </p>
-                        
+
                         <div className="oportunidade-info">
                           <div className="info-item">
                             <span>📍 {oportunidade.localizacao}</span>
@@ -237,7 +235,7 @@ const Perfil: React.FC = () => {
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="oportunidade-actions">
                           <button className="btn-inscrever">
                             Editar
