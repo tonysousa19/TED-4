@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "API\\database.sqlite",
+            "name": "algo"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
