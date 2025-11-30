@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import type { Oportunidade } from '../types';
 import { oportunidadeService } from '../services/oportunidadeService';
 import { favoritoService } from '../services/favoritoService';
+import "../styles/Home.css";
+
 
 const Home: React.FC = () => {
   const { usuario, logout } = useAuth();
@@ -380,3 +382,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
