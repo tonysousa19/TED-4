@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import type { NovaOportunidade } from '../types';
 import { oportunidadeService } from '../services/oportunidadeService';
+import "../styles/NovaOportunidade.css";
 
 const NovaOportunidade: React.FC = () => {
   const { usuario } = useAuth();
@@ -305,3 +306,4 @@ const NovaOportunidade: React.FC = () => {
 };
 
 export default NovaOportunidade;
+
