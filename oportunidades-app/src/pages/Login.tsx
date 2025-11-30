@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import "../styles/LoginCadastro.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -85,3 +86,4 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+
