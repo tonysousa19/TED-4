@@ -4,8 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { RegisterData } from '../types';
 import "../index.css"
 
-
-
 const Cadastro: React.FC = () => {
   const [dados, setDados] = useState<RegisterData>({
     nome: '',
@@ -20,10 +18,10 @@ const Cadastro: React.FC = () => {
       endereco: '',
     },
   });
-  
+
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
-  
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -33,19 +31,18 @@ const handleSubmit = async (e: React.FormEvent) => {
   setCarregando(true);
 
   try {
-    // Se for organização, primeiro criar usuário e depois organização
+
     const dadosEnvio = dados.role === 'organization' 
       ? { ...dados, organizacao: undefined } 
       : dados;
-    
+
     await register(dadosEnvio);
-    
-    // Se for organização, criar também o registro da organização
+
     if (dados.role === 'organization' && dados.organizacao) {
-      // Isso será feito automaticamente no backend agora
+
       console.log('Organização será criada automaticamente');
     }
-    
+
     navigate('/');
   } catch (error: any) {
     setErro(error.message || 'Erro ao criar conta');
@@ -56,7 +53,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     if (name.startsWith('organizacao.')) {
       const field = name.split('.')[1];
       setDados(prev => ({
@@ -81,7 +78,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               {erro}
             </div>
           )}
-          
+
           <div className="form-group">
             <label htmlFor="nome">Nome completo</label>
             <input
@@ -138,7 +135,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           {dados.role === 'organization' && (
             <div className="org-section">
               <h3>Dados da Organização</h3>
-              
+
               <div className="form-group">
                 <label htmlFor="organizacao.nome">Nome da Organização</label>
                 <input
