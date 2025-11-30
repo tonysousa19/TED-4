@@ -9,7 +9,7 @@ const NovaOportunidade: React.FC = () => {
   const navigate = useNavigate();
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
-  
+
   const [dados, setDados] = useState<NovaOportunidade>({
     titulo: '',
     descricao: '',
@@ -26,7 +26,6 @@ const NovaOportunidade: React.FC = () => {
     categoria_id: undefined
   });
 
-  // Verificar se é organização
   if (usuario?.role !== 'organization') {
     return (
       <div style={{padding: '40px', textAlign: 'center'}}>
@@ -39,7 +38,7 @@ const NovaOportunidade: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
+
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setDados(prev => ({ ...prev, [name]: checked }));
@@ -76,7 +75,7 @@ const NovaOportunidade: React.FC = () => {
               <h1>➕ Nova Oportunidade</h1>
               <p>Crie uma nova oportunidade para atrair participantes</p>
             </div>
-            
+
             <div className="user-info">
               <Link to="/perfil" className="btn" style={{background: '#6b7280'}}>
                 Voltar ao Perfil
@@ -288,7 +287,7 @@ const NovaOportunidade: React.FC = () => {
                 >
                   {carregando ? 'Criando...' : 'Criar Oportunidade'}
                 </button>
-                
+
                 <Link 
                   to="/perfil" 
                   className="btn" 
