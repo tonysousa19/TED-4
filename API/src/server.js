@@ -4,10 +4,9 @@ const { Categoria } = require('./models');
 
 const PORT = process.env.PORT || 4000;
 
-// Função para inicializar dados padrão
 async function inicializarDados() {
   try {
-    // Criar categorias padrão se não existirem
+
     const categoriasPadrao = [
       { nome: 'Tecnologia', descricao: 'Oportunidades na área de tecnologia e TI' },
       { nome: 'Marketing', descricao: 'Oportunidades na área de marketing digital' },
@@ -24,31 +23,28 @@ async function inicializarDados() {
         defaults: categoria
       });
     }
-    
+
     console.log('✅ Dados padrão inicializados');
   } catch (error) {
     console.error('❌ Erro ao inicializar dados padrão:', error);
   }
 }
 
-// Inicializar servidor
 async function startServer() {
   try {
-    // Testar conexão com banco
+
     await sequelize.authenticate();
     console.log('✅ Conectado ao banco de dados SQLite');
 
-    // Sincronizar modelos
     await sequelize.sync({ 
-      force: false, // NUNCA usar true em produção
+      force: false, 
+
       alter: true 
     });
     console.log('✅ Modelos sincronizados com o banco');
 
-    // Inicializar dados padrão
     await inicializarDados();
 
-    // Iniciar servidor
     app.listen(PORT, () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
       console.log(`📚 API disponível em: http://localhost:${PORT}`);
@@ -62,5 +58,4 @@ async function startServer() {
   }
 }
 
-// Inicializar aplicação
 startServer();

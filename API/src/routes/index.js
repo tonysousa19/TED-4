@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Usuario, Organizacao, Oportunidade, Categoria, Favorito } = require('../models');
 const authMiddleware = require('../middleware/auth');
-
-
+const { Op } = require('sequelize');
 
 // GET /api/ - Rota raiz
 router.get('/', (req, res) => {
@@ -36,6 +35,34 @@ router.get('/oportunidades', async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar oportunidades:', error);
     res.status(500).json({ erro: 'Erro ao buscar oportunidades' });
+  }
+});
+
+// GET /api/oportunidades/:id - Buscar oportunidade por ID
+router.get('/oportunidades/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const oportunidade = await Oportunidade.findByPk(id, {
+      include: [
+        { 
+          model: Organizacao,
+          include: [Usuario]
+        },
+        { 
+          model: Categoria 
+        }
+      ]
+    });
+
+    if (!oportunidade) {
+      return res.status(404).json({ erro: 'Oportunidade não encontrada' });
+    }
+
+    res.json(oportunidade);
+  } catch (error) {
+    console.error('Erro ao buscar oportunidade:', error);
+    res.status(500).json({ erro: 'Erro ao buscar oportunidade' });
   }
 });
 
@@ -107,6 +134,136 @@ router.post('/oportunidades', authMiddleware, async (req, res) => {
     res.status(500).json({ 
       erro: 'Erro ao criar oportunidade',
       detalhes: error.message 
+    });
+  }
+});
+
+// PUT /api/oportunidades/:id - Atualizar oportunidade (PROTEGIDO)
+router.put('/oportunidades/:id', authMiddleware, async (req, res) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+    
+    // Verificar se o usuário é uma organização
+    if (user.role !== 'organization') {
+      return res.status(403).json({ erro: 'Somente organizações podem atualizar oportunidades.' });
+    }
+
+    // Buscar organização do usuário
+    const organizacao = await Organizacao.findOne({ 
+      where: { usuario_id: user.id } 
+    });
+
+    if (!organizacao) {
+      return res.status(404).json({ erro: 'Organização não encontrada' });
+    }
+
+    // Buscar oportunidade e verificar se pertence à organização
+    const oportunidade = await Oportunidade.findOne({
+      where: {
+        id: id,
+        organizacao_id: organizacao.id
+      }
+    });
+
+    if (!oportunidade) {
+      return res.status(404).json({ erro: 'Oportunidade não encontrada ou não autorizada' });
+    }
+
+    // Atualizar oportunidade
+    await oportunidade.update(req.body);
+
+    // Buscar oportunidade atualizada com relacionamentos
+    const oportunidadeAtualizada = await Oportunidade.findByPk(id, {
+      include: [
+        { 
+          model: Organizacao,
+          include: [Usuario]
+        },
+        { 
+          model: Categoria 
+        }
+      ]
+    });
+
+    res.json(oportunidadeAtualizada);
+
+  } catch (error) {
+    console.error('Erro ao atualizar oportunidade:', error);
+    
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({ 
+        erro: 'Dados inválidos', 
+        detalhes: error.errors.map(e => e.message) 
+      });
+    }
+    
+    res.status(500).json({ erro: 'Erro ao atualizar oportunidade' });
+  }
+});
+
+// DELETE /api/oportunidades/:id - Excluir oportunidade (PROTEGIDO) - 🔥 NOVA ROTA 🔥
+router.delete('/oportunidades/:id', authMiddleware, async (req, res) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+    
+    console.log(`Tentando excluir oportunidade ${id} para usuário ${user.id} (${user.role})`);
+    
+    // Verificar se o usuário é uma organização
+    if (user.role !== 'organization') {
+      return res.status(403).json({ erro: 'Somente organizações podem excluir oportunidades.' });
+    }
+
+    // Buscar organização do usuário
+    const organizacao = await Organizacao.findOne({ 
+      where: { usuario_id: user.id } 
+    });
+
+    if (!organizacao) {
+      console.log(`Organização não encontrada para usuário ${user.id}`);
+      return res.status(404).json({ erro: 'Organização não encontrada' });
+    }
+
+    console.log(`Organização encontrada: ${organizacao.id}`);
+
+    // Buscar oportunidade e verificar se pertence à organização
+    const oportunidade = await Oportunidade.findOne({
+      where: {
+        id: id,
+        organizacao_id: organizacao.id
+      }
+    });
+
+    if (!oportunidade) {
+      console.log(`Oportunidade ${id} não encontrada para organização ${organizacao.id}`);
+      return res.status(404).json({ 
+        erro: 'Oportunidade não encontrada ou não autorizada',
+        detalhes: `Oportunidade ID: ${id}, Organização ID: ${organizacao.id}`
+      });
+    }
+
+    console.log(`Oportunidade encontrada: ${oportunidade.titulo}`);
+
+    // Opção 1: Excluir permanentemente (REMOVER DO BANCO)
+    // await oportunidade.destroy();
+    
+    // Opção 2: Desativar (MARCAR COMO INATIVA) - Recomendado
+    await oportunidade.update({ is_active: false });
+    
+    console.log(`Oportunidade ${id} excluída/desativada com sucesso`);
+
+    res.json({ 
+      mensagem: 'Oportunidade excluída com sucesso',
+      oportunidadeId: id
+    });
+
+  } catch (error) {
+    console.error('Erro detalhado ao excluir oportunidade:', error);
+    res.status(500).json({ 
+      erro: 'Erro ao excluir oportunidade',
+      detalhes: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
@@ -187,9 +344,94 @@ router.post('/minha-organizacao', authMiddleware, async (req, res) => {
     res.status(500).json({ erro: 'Erro ao criar organização' });
   }
 });
-// ... outras rotas ...
 
-// 🔽 CERTIFIQUE-SE QUE ESTAS ROTAS ESTÃO NO routes/index.js
+// Rotas de busca e filtros
+// GET /api/oportunidades/busca - Buscar oportunidades com filtros
+router.get('/oportunidades/busca', async (req, res) => {
+  try {
+    const { termo, area, localizacao, categoria_id, orderBy = 'createdAt', orderDirection = 'DESC' } = req.query;
+    
+    const where = { is_active: true };
+    
+    // Adicionar filtros dinamicamente
+    if (termo) {
+      where[Op.or] = [
+        { titulo: { [Op.like]: `%${termo}%` } },
+        { descricao: { [Op.like]: `%${termo}%` } }
+      ];
+    }
+    
+    if (area) {
+      where.area = area;
+    }
+    
+    if (localizacao) {
+      where.localizacao = localizacao;
+    }
+    
+    if (categoria_id) {
+      where.categoria_id = categoria_id;
+    }
+
+    const oportunidades = await Oportunidade.findAll({
+      where,
+      include: [
+        { 
+          model: Organizacao,
+          include: [Usuario]
+        },
+        { 
+          model: Categoria 
+        }
+      ],
+      order: [[orderBy, orderDirection.toUpperCase()]]
+    });
+
+    res.json(oportunidades);
+  } catch (error) {
+    console.error('Erro na busca de oportunidades:', error);
+    res.status(500).json({ erro: 'Erro na busca de oportunidades' });
+  }
+});
+
+// GET /api/oportunidades/areas - Listar áreas disponíveis
+router.get('/oportunidades/areas', async (req, res) => {
+  try {
+    const areas = await Oportunidade.findAll({
+      attributes: ['area'],
+      group: ['area'],
+      where: { is_active: true }
+    });
+    
+    const areasUnicas = areas.map(a => a.area).filter(area => area);
+    res.json(areasUnicas);
+  } catch (error) {
+    console.error('Erro ao buscar áreas:', error);
+    res.status(500).json({ erro: 'Erro ao buscar áreas' });
+  }
+});
+
+// GET /api/oportunidades/localizacoes - Listar localizações disponíveis
+router.get('/oportunidades/localizacoes', async (req, res) => {
+  try {
+    const localizacoes = await Oportunidade.findAll({
+      attributes: ['localizacao'],
+      group: ['localizacao'],
+      where: { is_active: true }
+    });
+    
+    const localizacoesUnicas = localizacoes.map(l => l.localizacao).filter(localizacao => localizacao);
+    res.json(localizacoesUnicas);
+  } catch (error) {
+    console.error('Erro ao buscar localizações:', error);
+    res.status(500).json({ erro: 'Erro ao buscar localizações' });
+  }
+});
+
+// Rotas de favoritos (mantidas do seu código original)
+// ... (manter todas as rotas de favoritos que você já tem) ...
+
+
 
 // GET /api/favoritos - Listar favoritos do usuário
 router.get('/favoritos', authMiddleware, async (req, res) => {

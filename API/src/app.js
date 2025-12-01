@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Configuração do CORS
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -10,24 +9,20 @@ app.use(cors({
   credentials: true
 }));
 
-// Middleware para parsing JSON
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Log de requisições
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// Importar e usar rotas
 const authRoutes = require('./routes/auth');
 const mainRoutes = require('./routes/index');
 
 app.use('/api/auth', authRoutes);
 app.use('/api', mainRoutes);
 
-// Rota de saúde
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -36,7 +31,6 @@ app.get('/health', (req, res) => {
   });
 });
 
-// 🔽 CORRIGIDO: Rota não encontrada (sem usar *)
 app.use((req, res, next) => {
   res.status(404).json({ 
     erro: 'Rota não encontrada',
@@ -45,7 +39,6 @@ app.use((req, res, next) => {
   });
 });
 
-// Middleware de erro global
 app.use((error, req, res, next) => {
   console.error('Erro global:', error);
   res.status(500).json({ 
