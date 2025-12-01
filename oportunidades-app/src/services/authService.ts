@@ -9,13 +9,13 @@ export const authService = {
     } catch (error: any) {
       console.error('Erro no serviço de login:', error);
       if (error.response) {
-        // Servidor respondeu com status de erro
+
         throw new Error(error.response.data.erro || 'Erro ao fazer login');
       } else if (error.request) {
-        // Requisição foi feita mas não houve resposta
+
         throw new Error('Servidor não respondeu. Verifique se a API está rodando.');
       } else {
-        // Algum outro erro
+
         throw new Error('Erro ao configurar a requisição');
       }
     }

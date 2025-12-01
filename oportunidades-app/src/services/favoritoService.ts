@@ -2,7 +2,7 @@ import api from './api';
 import type { Oportunidade } from '../types';
 
 export const favoritoService = {
-  // Listar favoritos do usuário
+
   async getFavoritos(): Promise<Oportunidade[]> {
     try {
       const response = await api.get('/favoritos');
@@ -17,7 +17,6 @@ export const favoritoService = {
     }
   },
 
-  // Adicionar oportunidade aos favoritos
   async adicionarFavorito(oportunidadeId: number): Promise<void> {
     try {
       const response = await api.post('/favoritos', { oportunidade_id: oportunidadeId });
@@ -31,7 +30,6 @@ export const favoritoService = {
     }
   },
 
-  // Remover oportunidade dos favoritos
   async removerFavorito(oportunidadeId: number): Promise<void> {
     try {
       const response = await api.delete(`/favoritos/${oportunidadeId}`);
@@ -45,7 +43,6 @@ export const favoritoService = {
     }
   },
 
-  // Verificar se uma oportunidade está favoritada
   async verificarFavorito(oportunidadeId: number): Promise<boolean> {
     try {
       const response = await api.get(`/favoritos/verificar/${oportunidadeId}`);

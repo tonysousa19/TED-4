@@ -1,4 +1,3 @@
-// src/components/Categorias.tsx
 import React from 'react';
 
 interface Categoria {

@@ -32,5 +32,4 @@ export const OportunidadeCard: React.FC<OportunidadeCardProps> = ({ oportunidade
       </div>
     </div>
   );
-
 };

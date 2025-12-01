@@ -17,7 +17,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Verificar se usuário está logado ao carregar a aplicação
   useEffect(() => {
     const tokenStorage = localStorage.getItem('token');
     const usuarioStorage = localStorage.getItem('usuario');
@@ -25,8 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (tokenStorage && usuarioStorage) {
       setToken(tokenStorage);
       setUsuario(JSON.parse(usuarioStorage));
-      
-      // Validar token com backend
+
       authService.getPerfil()
         .catch(() => {
           logout();
@@ -42,10 +40,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, senha: string) => {
     try {
       const data = await authService.login(email, senha);
-      
+
       setUsuario(data.usuario);
       setToken(data.token);
-      
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
     } catch (error) {
@@ -56,10 +54,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (dados: RegisterData) => {
     try {
       const data = await authService.register(dados);
-      
+
       setUsuario(data.usuario);
       setToken(data.token);
-      
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
     } catch (error) {
